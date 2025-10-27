@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech Recognition Reading Practice</title>
+    <style>
+        :root {
+            --color-primary: #2563eb;
+            --color-success: #10b981;
+            --color-error: #ef4444;
+            --color-warning: #f59e0b;
+            --color-background: #f3f4f6;
+            --color-text: #1f2937;
+            --color-surface: #ffffff;
+            --color-border: #e5e7eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--color-background);
+            color: var(--color-text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            background: linear-gradient(135deg, var(--color-primary), #1d4ed8);
+            color: white;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            background: var(--color-surface);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .menu-card {
+            background: var(--color-surface);
+            border-radius: 12px;
+            padding: 40px 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid var(--color-border);
+        }
+
+        .menu-card:hover {
+            border-color: var(--color-primary);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.2);
+        }
+
+        .menu-card-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .menu-card h3 {
+            color: var(--color-primary);
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .menu-card p {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 48px;
+            text-align: center;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #1d4ed8;
+        }
+
+        .btn-success {
+            background: var(--color-success);
+            color: white;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: #059669;
+        }
+
+        .btn-error {
+            background: var(--color-error);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--color-warning);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #4b5563;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--color-border);
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .practice-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 30px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .practice-display h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .sentence-text {
+            font-size: 1.4rem;
+            line-height: 1.8;
+            margin: 20px 0;
+            font-weight: 500;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-box {
+            background: var(--color-surface);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            flex: 1;
+            min-width: 150px;
+            border: 2px solid var(--color-border);
+        }
+
+        .info-label {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .recording-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            background: var(--color-error);
+            color: white;
+            border-radius: 8px;
+            font-weight: 600;
+            margin: 20px 0;
+        }
+
+        .recording-dot {
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.2);
+            }
+        }
+
+        .feedback {
+            padding: 16px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-weight: 600;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .feedback-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 2px solid var(--color-success);
+        }
+
+        .feedback-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 2px solid var(--color-error);
+        }
+
+        .feedback-warning {
+            background: #fef3c7;
+            color: #92400e;
+            border: 2px solid var(--color-warning);
+        }
+
+        .alert {
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            border-color: var(--color-primary);
+            color: #1e40af;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            border-color: var(--color-warning);
+            color: #92400e;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            border-color: var(--color-error);
+            color: #991b1b;
+        }
+
+        .spelling-display {
+            background: var(--color-surface);
+            padding: 30px;
+            border-radius: 12px;
+            border: 3px dashed var(--color-primary);
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .spelled-letters {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            letter-spacing: 8px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .news-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .news-item {
+            background: var(--color-surface);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .news-text {
+            flex: 1;
+            font-size: 1.05rem;
+            font-weight: 500;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, var(--color-success), #059669);
+            color: white;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .summary-score {
+            font-size: 4rem;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .practice-display {
+                padding: 25px;
+            }
+
+            .sentence-text {
+                font-size: 1.2rem;
+            }
+
+            .btn {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎤 Speech Recognition Reading Practice</h1>
+            <p class="subtitle">Master your pronunciation and spelling with AI-powered speech recognition</p>
+        </header>
+
+        <!-- Home Menu Section -->
+        <div id="homeSection" class="section active">
+            <div id="browserCheck"></div>
+            <div class="menu-grid">
+                <div class="menu-card" onclick="showSection('sentenceSetup')">
+                    <div class="menu-card-icon">📖</div>
+                    <h3>Sentence Practice</h3>
+                    <p>Read sentences aloud and improve your pronunciation</p>
+                </div>
+                <div class="menu-card" onclick="showSection('spellingSetup')">
+                    <div class="menu-card-icon">🔤</div>
+                    <h3>Spelling Practice</h3>
+                    <p>Spell words letter by letter using your voice</p>
+                </div>
+                <div class="menu-card" onclick="showSection('newsSetup')">
+                    <div class="menu-card-icon">📰</div>
+                    <h3>Economy News</h3>
+                    <p>Practice with live market news statements</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 1: Sentence Practice Setup -->
+        <div id="sentenceSetup" class="section">
+            <div class="card">
+                <h2 style="margin-bottom: 20px;">📖 Sentence Practice Setup</h2>
+                <div class="alert alert-info">
+                    <strong>Instructions:</strong> Enter sentences below, one per line. Number them if you like (1., 2., etc.)
+                </div>
+                <div class="form-group">
+                    <label for="sentenceInput">Enter Sentences:</label>
+                    <textarea id="sentenceInput" placeholder="1. The quick brown fox jumps over the lazy dog&#10;2. Practice makes perfect when learning to read&#10;3. Speech recognition technology is amazing">1. The quick brown fox jumps over the lazy dog
+2. Practice makes perfect when learning to read
+3. Speech recognition technology is amazing
+4. Reading aloud improves pronunciation skills</textarea>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="startSentencePractice()">Start Practice</button>
+                    <button class="btn btn-secondary" onclick="showSection('homeSection')">Back to Menu</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 1: Sentence Practice -->
+        <div id="sentencePractice" class="section">
+            <div class="progress-info">
+                <div class="info-box">
+                    <div class="info-label">Progress</div>
+                    <div class="info-value" id="sentenceProgress">1/4</div>
+                </div>
+                <div class="info-box">
+                    <div class="info-label">Score</div>
+                    <div class="info-value" id="sentenceScore">0</div>
+                </div>
+            </div>
+
+            <div class="practice-display">
+                <h2>Sentence <span id="currentSentenceNum">1</span></h2>
+                <div class="sentence-text" id="currentSentence"></div>
+            </div>
+
+            <div class="card">
+                <div id="sentenceFeedback"></div>
+                <div id="recordingIndicator" class="hidden">
+                    <div class="recording-indicator">
+                        <div class="recording-dot"></div>
+                        Recording... Speak now!
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-warning" onclick="listenSentence()" id="listenBtn">
+                        🔊 Listen to Sentence
+                    </button>
+                    <button class="btn btn-success" onclick="speakSentence()" id="speakBtn">
+                        🎤 Speak Now
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 1: Results -->
+        <div id="sentenceResults" class="section">
+            <div class="summary-card">
+                <h2>🎉 Sentence Practice Complete!</h2>
+                <div class="summary-score" id="finalSentenceScore">0</div>
+                <p style="font-size: 1.2rem;">sentences correct</p>
+            </div>
+            <div class="card">
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="showSection('sentenceSetup')">Practice Again</button>
+                    <button class="btn btn-secondary" onclick="showSection('homeSection')">Back to Menu</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Spelling Practice Setup -->
+        <div id="spellingSetup" class="section">
+            <div class="card">
+                <h2 style="margin-bottom: 20px;">🔤 Spelling Practice Setup</h2>
+                <div class="alert alert-info">
+                    <strong>Instructions:</strong> Enter words below, one per line. You'll spell each word letter by letter using your voice.
+                </div>
+                <div class="form-group">
+                    <label for="wordInput">Enter Words:</label>
+                    <textarea id="wordInput" placeholder="apple&#10;computer&#10;reading&#10;practice">apple
+computer
+reading
+practice
+education
+technology</textarea>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="startSpellingPractice()">Start Spelling</button>
+                    <button class="btn btn-secondary" onclick="showSection('homeSection')">Back to Menu</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Spelling Practice -->
+        <div id="spellingPractice" class="section">
+            <div class="progress-info">
+                <div class="info-box">
+                    <div class="info-label">Word</div>
+                    <div class="info-value" id="wordProgress">1/6</div>
+                </div>
+                <div class="info-box">
+                    <div class="info-label">Attempts Left</div>
+                    <div class="info-value" id="attemptsLeft">3</div>
+                </div>
+                <div class="info-box">
+                    <div class="info-label">Correct</div>
+                    <div class="info-value" id="wordsCorrect">0</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="alert alert-info">
+                    🔊 Listen to the word, then spell it letter by letter using your voice.
+                </div>
+                
+                <div class="spelling-display">
+                    <p style="font-size: 1.1rem; color: #6b7280; margin-bottom: 10px;">Your Spelling:</p>
+                    <div class="spelled-letters" id="spelledLetters">_</div>
+                </div>
+
+                <div id="spellingFeedback"></div>
+                <div id="spellingRecording" class="hidden">
+                    <div class="recording-indicator">
+                        <div class="recording-dot"></div>
+                        Listening for letter...
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-warning" onclick="repeatWord()" id="repeatWordBtn">
+                        🔊 Repeat Word
+                    </button>
+                    <button class="btn btn-primary" onclick="speakLetter()" id="speakLetterBtn">
+                        🎤 Say Letter
+                    </button>
+                    <button class="btn btn-success" onclick="submitSpelling()" id="submitSpellingBtn">
+                        ✓ Submit Spelling
+                    </button>
+                    <button class="btn btn-error" onclick="clearSpelling()" id="clearSpellingBtn">
+                        ✗ Clear
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Results -->
+        <div id="spellingResults" class="section">
+            <div class="summary-card">
+                <h2>🎉 Spelling Practice Complete!</h2>
+                <div class="summary-score" id="finalSpellingScore">0</div>
+                <p style="font-size: 1.2rem;">words spelled correctly</p>
+            </div>
+            <div class="card">
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="showSection('spellingSetup')">Practice Again</button>
+                    <button class="btn btn-secondary" onclick="showSection('homeSection')">Back to Menu</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: News Setup -->
+        <div id="newsSetup" class="section">
+            <div class="card">
+                <h2 style="margin-bottom: 20px;">📰 Economy News Practice</h2>
+                <div class="alert alert-warning">
+                    <strong>Note:</strong> Live news integration requires backend API proxy. Using sample economic statements for demonstration.
+                </div>
+                <p style="margin: 20px 0;">Click the button below to load sample economy news statements related to gold prices and stock markets from India, US, and EU.</p>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="fetchNews()">📡 Fetch News Statements</button>
+                    <button class="btn btn-secondary" onclick="showSection('homeSection')">Back to Menu</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: News List -->
+        <div id="newsList" class="section">
+            <div class="card">
+                <h2 style="margin-bottom: 20px;">📰 Economy News Statements</h2>
+                <div class="alert alert-info">
+                    Click "Practice" on any statement to practice reading it aloud.
+                </div>
+                <div class="news-list" id="newsItems"></div>
+                <div class="btn-group" style="margin-top: 20px;">
+                    <button class="btn btn-secondary" onclick="showSection('homeSection')">Back to Menu</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: News Practice -->
+        <div id="newsPractice" class="section">
+            <div class="progress-info">
+                <div class="info-box">
+                    <div class="info-label">Score</div>
+                    <div class="info-value" id="newsScore">0</div>
+                </div>
+            </div>
+
+            <div class="practice-display">
+                <h2>📰 News Statement</h2>
+                <div class="sentence-text" id="currentNews"></div>
+            </div>
+
+            <div class="card">
+                <div id="newsFeedback"></div>
+                <div id="newsRecording" class="hidden">
+                    <div class="recording-indicator">
+                        <div class="recording-dot"></div>
+                        Recording... Speak now!
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-warning" onclick="listenNews()">
+                        🔊 Listen to Statement
+                    </button>
+                    <button class="btn btn-success" onclick="speakNews()" id="newsSeakBtn">
+                        🎤 Speak Now
+                    </button>
+                    <button class="btn btn-secondary" onclick="showSection('newsList')">
+                        ← Back to List
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State Management
+        const state = {
+            sentences: [],
+            currentSentenceIndex: 0,
+            sentenceScore: 0,
+            words: [],
+            currentWordIndex: 0,
+            currentSpelling: [],
+            attemptsRemaining: 3,
+            wordsCorrect: 0,
+            newsStatements: [],
+            currentNewsIndex: 0,
+            newsScore: 0
+        };
+
+        // Speech Recognition Setup
+        let recognition = null;
+        let synthesis = window.speechSynthesis;
+
+        // Initialize Speech Recognition
+        function initSpeechRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            
+            if (!SpeechRecognition) {
+                const checkDiv = document.getElementById('browserCheck');
+                checkDiv.innerHTML = `
+                    <div class="alert alert-error">
+                        <strong>⚠️ Speech Recognition Not Supported</strong><br>
+                        This app requires Chrome, Edge, or Safari browser with speech recognition support.
+                        Please use a compatible browser and ensure microphone permissions are enabled.
+                    </div>
+                `;
+                return false;
+            }
+
+            recognition = new SpeechRecognition();
+            recognition.lang = 'en-US';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            return true;
+        }
+
+        // Text-to-Speech Function
+        function speak(text, callback) {
+            if (synthesis.speaking) {
+                synthesis.cancel();
+            }
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.9;
+            utterance.pitch = 1.0;
+            utterance.volume = 1.0;
+            utterance.lang = 'en-US';
+
+            if (callback) {
+                utterance.onend = callback;
+            }
+
+            synthesis.speak(utterance);
+        }
+
+        // Navigation
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        // Fuzzy text matching
+        function fuzzyMatch(text1, text2) {
+            const normalize = (str) => str.toLowerCase()
+                .replace(/[^a-z0-9\s]/g, '')
+                .replace(/\s+/g, ' ')
+                .trim();
+            
+            const normalized1 = normalize(text1);
+            const normalized2 = normalize(text2);
+            
+            if (normalized1 === normalized2) return true;
+            
+            // Calculate similarity
+            const words1 = normalized1.split(' ');
+            const words2 = normalized2.split(' ');
+            
+            if (words1.length !== words2.length) {
+                return false;
+            }
+            
+            let matches = 0;
+            for (let i = 0; i < words1.length; i++) {
+                if (words1[i] === words2[i]) {
+                    matches++;
+                }
+            }
+            
+            // Allow up to 10% word differences
+            return (matches / words1.length) >= 0.9;
+        }
+
+        // ============= SECTION 1: SENTENCE PRACTICE =============
+
+        function startSentencePractice() {
+            const input = document.getElementById('sentenceInput').value.trim();
+            if (!input) {
+                alert('Please enter at least one sentence!');
+                return;
+            }
+
+            // Parse sentences (remove numbering if present)
+            state.sentences = input.split('\n')
+                .filter(line => line.trim())
+                .map(line => line.replace(/^\d+\.?\s*/, '').trim());
+            
+            state.currentSentenceIndex = 0;
+            state.sentenceScore = 0;
+
+            showSection('sentencePractice');
+            displayCurrentSentence();
+        }
+
+        function displayCurrentSentence() {
+            const sentence = state.sentences[state.currentSentenceIndex];
+            document.getElementById('currentSentence').textContent = sentence;
+            document.getElementById('currentSentenceNum').textContent = state.currentSentenceIndex + 1;
+            document.getElementById('sentenceProgress').textContent = 
+                `${state.currentSentenceIndex + 1}/${state.sentences.length}`;
+            document.getElementById('sentenceScore').textContent = state.sentenceScore;
+            document.getElementById('sentenceFeedback').innerHTML = '';
+            document.getElementById('recordingIndicator').classList.add('hidden');
+        }
+
+        function listenSentence() {
+            const sentence = state.sentences[state.currentSentenceIndex];
+            speak(sentence);
+        }
+
+        function speakSentence() {
+            if (!recognition) {
+                alert('Speech recognition is not available. Please use a supported browser.');
+                return;
+            }
+
+            const feedbackDiv = document.getElementById('sentenceFeedback');
+            const recordingDiv = document.getElementById('recordingIndicator');
+            const speakBtn = document.getElementById('speakBtn');
+
+            recordingDiv.classList.remove('hidden');
+            feedbackDiv.innerHTML = '';
+            speakBtn.disabled = true;
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                const targetSentence = state.sentences[state.currentSentenceIndex];
+
+                recordingDiv.classList.add('hidden');
+                speakBtn.disabled = false;
+
+                if (fuzzyMatch(transcript, targetSentence)) {
+                    state.sentenceScore++;
+                    feedbackDiv.innerHTML = `
+                        <div class="feedback feedback-success">
+                            ✓ Correct! +1 Mark<br>
+                            <small>You said: "${transcript}"</small>
+                        </div>
+                    `;
+                    
+                    document.getElementById('sentenceScore').textContent = state.sentenceScore;
+
+                    setTimeout(() => {
+                        state.currentSentenceIndex++;
+                        if (state.currentSentenceIndex < state.sentences.length) {
+                            displayCurrentSentence();
+                        } else {
+                            showSentenceResults();
+                        }
+                    }, 2000);
+                } else {
+                    feedbackDiv.innerHTML = `
+                        <div class="feedback feedback-error">
+                            ✗ Not quite right. Try again!<br>
+                            <small>You said: "${transcript}"</small>
+                        </div>
+                    `;
+                }
+            };
+
+            recognition.onerror = (event) => {
+                recordingDiv.classList.add('hidden');
+                speakBtn.disabled = false;
+                
+                let errorMsg = 'Error occurred. Please try again.';
+                if (event.error === 'no-speech') {
+                    errorMsg = 'No speech detected. Please try again.';
+                } else if (event.error === 'not-allowed') {
+                    errorMsg = 'Microphone permission denied. Please enable microphone access.';
+                }
+                
+                feedbackDiv.innerHTML = `
+                    <div class="feedback feedback-error">
+                        ${errorMsg}
+                    </div>
+                `;
+            };
+
+            recognition.onend = () => {
+                recordingDiv.classList.add('hidden');
+                speakBtn.disabled = false;
+            };
+
+            try {
+                recognition.start();
+            } catch (e) {
+                recordingDiv.classList.add('hidden');
+                speakBtn.disabled = false;
+                feedbackDiv.innerHTML = `
+                    <div class="feedback feedback-error">
+                        Could not start recording. Please try again.
+                    </div>
+                `;
+            }
+        }
+
+        function showSentenceResults() {
+            document.getElementById('finalSentenceScore').textContent = 
+                `${state.sentenceScore}/${state.sentences.length}`;
+            showSection('sentenceResults');
+        }
+
+        // ============= SECTION 2: SPELLING PRACTICE =============
+
+        function startSpellingPractice() {
+            const input = document.getElementById('wordInput').value.trim();
+            if (!input) {
+                alert('Please enter at least one word!');
+                return;
+            }
+
+            state.words = input.split('\n')
+                .filter(line => line.trim())
+                .map(word => word.trim().toLowerCase());
+            
+            state.currentWordIndex = 0;
+            state.wordsCorrect = 0;
+
+            showSection('spellingPractice');
+            startNewWord();
+        }
+
+        function startNewWord() {
+            state.currentSpelling = [];
+            state.attemptsRemaining = 3;
+
+            updateSpellingDisplay();
+            document.getElementById('spellingFeedback').innerHTML = '';
+            document.getElementById('spellingRecording').classList.add('hidden');
+
+            // Automatically speak the word
+            setTimeout(() => {
+                const word = state.words[state.currentWordIndex];
+                speak(word);
+            }, 500);
+        }
+
+        function updateSpellingDisplay() {
+            document.getElementById('wordProgress').textContent = 
+                `${state.currentWordIndex + 1}/${state.words.length}`;
+            document.getElementById('attemptsLeft').textContent = state.attemptsRemaining;
+            document.getElementById('wordsCorrect').textContent = state.wordsCorrect;
+            
+            const spelledText = state.currentSpelling.length > 0 
+                ? state.currentSpelling.join('').toUpperCase()
+                : '_';
+            document.getElementById('spelledLetters').textContent = spelledText;
+        }
+
+        function repeatWord() {
+            const word = state.words[state.currentWordIndex];
+            speak(word);
+        }
+
+        function speakLetter() {
+            if (!recognition) {
+                alert('Speech recognition is not available.');
+                return;
+            }
+
+            const recordingDiv = document.getElementById('spellingRecording');
+            const feedbackDiv = document.getElementById('spellingFeedback');
+            const speakBtn = document.getElementById('speakLetterBtn');
+
+            recordingDiv.classList.remove('hidden');
+            feedbackDiv.innerHTML = '';
+            speakBtn.disabled = true;
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript.toLowerCase().trim();
+                recordingDiv.classList.add('hidden');
+                speakBtn.disabled = false;
+
+                // Extract single letter
+                const letterMatch = transcript.match(/\b([a-z])\b/);
+                if (letterMatch) {
+                    const letter = letterMatch[1];
+                    state.currentSpelling.push(letter);
+                    updateSpellingDisplay();
+                    
+                    feedbackDiv.innerHTML = `
+                        <div class="feedback feedback-success">
+                            ✓ Added letter: ${letter.toUpperCase()}
+                        </div>
+                    `;
+                } else {
+                    feedbackDiv.innerHTML = `
+                        <div class="feedback feedback-error">
+                            Could not recognize a letter. Please say a single letter (A to Z).
+                        </div>
+                    `;
+                }
+            };
+
+            recognition.onerror = (event) => {
+                recordingDiv.classList.add('hidden');
+                speakBtn.disabled = false;
+                
+                let errorMsg = 'Error occurred. Please try again.';
+                if (event.error === 'no-speech') {
+                    errorMsg = 'No speech detected. Please say a letter.';
+                } else if (event.error === 'not-allowed') {
+                    errorMsg = 'Microphone permission denied.';
+                }
+                
+                feedbackDiv.innerHTML = `
+                    <div class="feedback feedback-error">
+                        ${errorMsg}
+                    </div>
+                `;
+            };
+
+            recognition.onend = () => {
+                recordingDiv.classList.add('hidden');
+                speakBtn.disabled = false;
+            };
+
+            try {
+                recognition.start();
+            } catch (e) {
+                recordingDiv.classList.add('hidden');
+                speakBtn.disabled = false;
+            }
+        }
+
+        function clearSpelling() {
+            state.currentSpelling = [];
+            updateSpellingDisplay();
+            document.getElementById('spellingFeedback').innerHTML = '';
+        }
+
+        function submitSpelling() {
+            const feedbackDiv = document.getElementById('spellingFeedback');
+            const userSpelling = state.currentSpelling.join('').toLowerCase();
+            const correctWord = state.words[state.currentWordIndex];
+
+            if (userSpelling === correctWord) {
+                state.wordsCorrect++;
+                feedbackDiv.innerHTML = `
+                    <div class="feedback feedback-success">
+                        🎉 Correct! The word is "${correctWord}"!
+                    </div>
+                `;
+
+                setTimeout(() => {
+                    state.currentWordIndex++;
+                    if (state.currentWordIndex < state.words.length) {
+                        startNewWord();
+                    } else {
+                        showSpellingResults();
+                    }
+                }, 2000);
+            } else {
+                state.attemptsRemaining--;
+                updateSpellingDisplay();
+
+                if (state.attemptsRemaining > 0) {
+                    feedbackDiv.innerHTML = `
+                        <div class="feedback feedback-error">
+                            ✗ Incorrect spelling. ${state.attemptsRemaining} attempts remaining. Try again!
+                        </div>
+                    `;
+                } else {
+                    feedbackDiv.innerHTML = `
+                        <div class="feedback feedback-warning">
+                            The correct spelling is: <strong>${correctWord.toUpperCase()}</strong><br>
+                            Moving to next word...
+                        </div>
+                    `;
+
+                    speak('Try next word');
+
+                    setTimeout(() => {
+                        state.currentWordIndex++;
+                        if (state.currentWordIndex < state.words.length) {
+                            startNewWord();
+                        } else {
+                            showSpellingResults();
+                        }
+                    }, 3000);
+                }
+            }
+        }
+
+        function showSpellingResults() {
+            document.getElementById('finalSpellingScore').textContent = 
+                `${state.wordsCorrect}/${state.words.length}`;
+            showSection('spellingResults');
+        }
+
+        // ============= SECTION 3: NEWS PRACTICE =============
+
+        function fetchNews() {
+            state.newsStatements = [
+                "India gold prices surge to record highs",
+                "US stock market shows strong rally today",
+                "European markets close mixed amid uncertainty",
+                "Gold demand increases in Indian markets",
+                "Wall Street opens higher on earnings",
+                "European Central Bank holds rates steady",
+                "Indian rupee strengthens against US dollar",
+                "US Federal Reserve signals policy shift",
+                "Euro zone inflation remains above target",
+                "Asian markets follow Wall Street gains"
+            ];
+
+            state.newsScore = 0;
+            displayNewsList();
+        }
+
+        function displayNewsList() {
+            const newsItems = document.getElementById('newsItems');
+            newsItems.innerHTML = state.newsStatements.map((statement, index) => `
+                <div class="news-item">
+                    <div class="news-text">${statement}</div>
+                    <button class="btn btn-primary" onclick="practiceNews(${index})">
+                        Practice
+                    </button>
+                </div>
+            `).join('');
+
+            showSection('newsList');
+        }
+
+        function practiceNews(index) {
+            state.currentNewsIndex = index;
+            document.getElementById('currentNews').textContent = state.newsStatements[index];
+            document.getElementById('newsScore').textContent = state.newsScore;
+            document.getElementById('newsFeedback').innerHTML = '';
+            document.getElementById('newsRecording').classList.add('hidden');
+            showSection('newsPractice');
+        }
+
+        function listenNews() {
+            const statement = state.newsStatements[state.currentNewsIndex];
+            speak(statement);
+        }
+
+        function speakNews() {
+            if (!recognition) {
+                alert('Speech recognition is not available.');
+                return;
+            }
+
+            const feedbackDiv = document.getElementById('newsFeedback');
+            const recordingDiv = document.getElementById('newsRecording');
+            const speakBtn = document.getElementById('newsSeakBtn');
+
+            recordingDiv.classList.remove('hidden');
+            feedbackDiv.innerHTML = '';
+            speakBtn.disabled = true;
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                const targetStatement = state.newsStatements[state.currentNewsIndex];
+
+                recordingDiv.classList.add('hidden');
+                speakBtn.disabled = false;
+
+                if (fuzzyMatch(transcript, targetStatement)) {
+                    state.newsScore++;
+                    feedbackDiv.innerHTML = `
+                        <div class="feedback feedback-success">
+                            ✓ Excellent! +1 Mark<br>
+                            <small>You said: "${transcript}"</small>
+                        </div>
+                    `;
+                    
+                    document.getElementById('newsScore').textContent = state.newsScore;
+
+                    setTimeout(() => {
+                        showSection('newsList');
+                    }, 2000);
+                } else {
+                    feedbackDiv.innerHTML = `
+                        <div class="feedback feedback-error">
+                            ✗ Not quite right. Try again!<br>
+                            <small>You said: "${transcript}"</small>
+                        </div>
+                    `;
+                }
+            };
+
+            recognition.onerror = (event) => {
+                recordingDiv.classList.add('hidden');
+                speakBtn.disabled = false;
+                
+                let errorMsg = 'Error occurred. Please try again.';
+                if (event.error === 'no-speech') {
+                    errorMsg = 'No speech detected. Please try again.';
+                } else if (event.error === 'not-allowed') {
+                    errorMsg = 'Microphone permission denied.';
+                }
+                
+                feedbackDiv.innerHTML = `
+                    <div class="feedback feedback-error">
+                        ${errorMsg}
+                    </div>
+                `;
+            };
+
+            recognition.onend = () => {
+                recordingDiv.classList.add('hidden');
+                speakBtn.disabled = false;
+            };
+
+            try {
+                recognition.start();
+            } catch (e) {
+                recordingDiv.classList.add('hidden');
+                speakBtn.disabled = false;
+            }
+        }
+
+        // Initialize on page load
+        window.onload = () => {
+            const supported = initSpeechRecognition();
+            if (supported) {
+                const checkDiv = document.getElementById('browserCheck');
+                checkDiv.innerHTML = `
+                    <div class="alert alert-info">
+                        ✓ Speech recognition is ready! Please allow microphone access when prompted.
+                    </div>
+                `;
+            }
+        };
+    </script>
+</body>
+</html>
